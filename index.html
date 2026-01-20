@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Validate Logo Motion</title>
+
+<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+<script src="https://unpkg.com/gsap@3/dist/MotionPathPlugin.min.js"></script>
+
+<style>
+  body {
+    margin: 0;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #container {
+    position: relative;
+    width: 400px;
+    height: 300px;
+  }
+
+  #stage {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+</style>
+</head>
+
+<body>
+
+<div id="container">
+  <div id="stage">
+
+    <!-- CIRCULO NARANJO -->
+    <svg id="orange" width="245" height="245" viewBox="0 0 245 245">
+      <path d="M122.5 0C190.156 0 245 54.845 245 122.5C245 190.155 190.156 245 122.5 245C54.845 245 0 190.155 0 122.5C0 54.845 54.845 0 122.5 0Z" fill="#F16347"/>
+    </svg>
+
+    <!-- CIRCULO AMARILLO -->
+    <svg id="yellow" width="245" height="245" viewBox="0 0 245 245">
+      <path d="M122.5 0C190.156 0 245 54.845 245 122.5C245 190.155 190.156 245 122.5 245C54.845 245 0 190.155 0 122.5C0 54.845 54.845 0 122.5 0Z" fill="#F0DC29"/>
+    </svg>
+
+    <!-- LOGO FINAL -->
+    <svg id="finalLogo" width="392" height="302" viewBox="0 0 392 302" style="opacity:0">
+      <rect width="245" height="245" rx="122.5" transform="matrix(-1 0 0 1 273.693 28.9868)" fill="#F16347"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M363.307 151.487C363.307 83.8319 308.462 28.9869 240.807 28.9869C236.113 28.9869 231.48 29.2509 226.924 29.7649C216.432 29.6063 205.908 32.1063 196.448 37.2649C196.191 37.3648 195.935 37.4655 195.679 37.5671C191.075 40.2569 186.485 43.6901 182.338 47.8365L132.458 97.7166C108.352 121.822 108.352 160.905 132.457 185.01C148.351 200.904 170.757 206.318 191.087 201.253C201.751 198.678 211.862 193.228 220.187 184.903L268.291 136.799C273.05 145.26 273.05 151.487 273.05 151.487C273.05 203.205 241 247.437 195.678 265.406C209.644 270.943 224.87 273.987 240.807 273.987C308.462 273.987 363.307 219.142 363.307 151.487Z" fill="#F0DC29"/>
+    </svg>
+
+  </div>
+</div>
+
+<script>
+window.onload = () => {
+  gsap.registerPlugin(MotionPathPlugin);
+
+  const orange = document.getElementById("orange");
+  const yellow = document.getElementById("yellow");
+  const finalLogo = document.getElementById("finalLogo");
+
+  // Todos parten exactamente en el centro
+  gsap.set([orange, yellow, finalLogo], { x: 0, y: 0, transformOrigin: "50% 50%" });
+
+  const tl = gsap.timeline();
+
+  const offset = 110;
+
+  // NARANJO
+  tl.to(orange, {
+    duration: 3.2,
+    motionPath: {
+      path: [
+        {x: 0, y: 0},
+        {x: 80, y: -40},
+        {x: 160, y: 0},
+        {x: 80, y: 40},
+        {x: -offset, y: 0}
+      ],
+      curviness: 1.7
+    },
+    ease: "expo.inOut"
+  }, 0);
+
+  // AMARILLO (empieza un poco después)
+  tl.to(yellow, {
+    duration: 3.2,
+    motionPath: {
+      path: [
+        {x: 0, y: 0},
+        {x: -80, y: 40},
+        {x: -160, y: 0},
+        {x: -80, y: -40},
+        {x: offset, y: 0}
+      ],
+      curviness: 1.7
+    },
+    ease: "expo.inOut"
+  }, 0.2);
+
+  // Micro rebote al volver al centro
+  tl.to([orange, yellow], {
+    duration: 0.25,
+    scale: 1.05,
+    ease: "back.out(2)"
+  });
+
+  // Desaparecen círculos
+  tl.to([orange, yellow], {
+    duration: 0.3,
+    opacity: 0
+  });
+
+  // Aparece logo final en el MISMO lugar
+  tl.to(finalLogo, {
+    duration: 0.6,
+    opacity: 1,
+    ease: "power2.out"
+  });
+};
+</script>
+
+</body>
+</html>
